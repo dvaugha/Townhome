@@ -53,7 +53,16 @@ function updateDashboard() {
         sum + (parseFloat(document.getElementById(`town-${u}`).value) || 0), 0);
 
     const netProceeds = (currValue * (1 - sellRate)) - currBal;
-    const townLoan = Math.max(0, townPrice - netProceeds);
+    const isPayCash = document.getElementById('town-pay-cash').checked;
+    
+    let townLoan = Math.max(0, townPrice - netProceeds);
+    let townStartingCapital = 0;
+    
+    if (isPayCash) {
+        townLoan = 0;
+        townStartingCapital = netProceeds - townPrice;
+    }
+
     const townPMT = calculatePMT(townRate / 12, townTerm, townLoan);
     const townMonthlyTotal = townPMT + townTaxes + townIns + townHoa + townUtils;
 
@@ -153,7 +162,7 @@ function updateDashboard() {
     let tBal = townLoan;
     
     let cInv = 0;
-    let tInv = 0;
+    let tInv = townStartingCapital;
     let rInv = rentStartingCapital;
 
     years.forEach(y => {

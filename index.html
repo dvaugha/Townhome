@@ -53,7 +53,7 @@
                 <div class="input-section">
                     <h3>Home Details</h3>
                     <div class="input-group"><label>Current Value ($)</label><input type="number" id="curr-value" value="720000" step="10000"></div>
-                    <div class="input-group"><label>Remaining Mortgage ($)</label><input type="number" id="curr-balance" value="248000" step="10000"></div>
+                    <div class="input-group"><label>Remaining Mortgage ($)</label><input type="number" id="curr-balance" value="232950" step="1000"></div>
                     <div class="input-group"><label>Interest Rate (%)</label><input type="number" id="curr-rate" value="1.75" step="0.1"></div>
                     <div class="input-group"><label>Remaining Term (Yrs)</label><input type="number" id="curr-term" value="15"></div>
                 </div>
@@ -89,8 +89,12 @@
                     <h3>Purchase Details</h3>
                     <div class="input-group"><label>Asking Price ($)</label><input type="number" id="town-price" value="550000" step="10000"></div>
                     <p class="helper-text">Down payment rolls over from Current Home Net Equity.</p>
-                    <div class="input-group"><label>New Loan Rate (%)</label><input type="number" id="town-rate" value="6.5" step="0.1"></div>
-                    <div class="input-group"><label>New Term (Yrs)</label><input type="number" id="town-term" value="30"></div>
+                    <div class="input-group"><label>New Loan Rate (%)</label><input type="number" id="town-rate" value="5.48" step="0.1"></div>
+                    <div class="input-group"><label>New Term (Yrs)</label><input type="number" id="town-term" value="15"></div>
+                    <div class="input-group" style="flex-direction:row; align-items:center; margin-top:5px;">
+                        <input type="checkbox" id="town-pay-cash" style="width:16px; height:16px; margin-right:8px; cursor:pointer;">
+                        <label style="margin:0; cursor:pointer;" for="town-pay-cash">Pay completely in Cash</label>
+                    </div>
                 </div>
                 <div class="input-section">
                     <h3>Monthly Costs</h3>
