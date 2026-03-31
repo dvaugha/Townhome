@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A comprehensive financial comparison tool for Living Scenarios: Stay vs. Townhome vs. Rent & Invest.">
+    <title>Property Comparison Dashboard</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="background-animation"></div>
+    
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>Living Scenario <span class="highlight">Comparison</span> Tool</h1>
+            <p>Analyze the 10-year financial impact of staying, buying a townhome, or renting and investing.</p>
+        </header>
+
+        <!-- Global Assumptions Setup -->
+        <section class="glass-panel global-assumptions">
+            <h2>Global Assumptions</h2>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Selling Costs (%)</label>
+                    <input type="number" id="global-selling-costs" value="6.0" step="0.5">
+                </div>
+                <div class="input-group">
+                    <label>Annual Home Apprec. (%)</label>
+                    <input type="number" id="global-home-apprec" value="3.0" step="0.5">
+                </div>
+                <div class="input-group">
+                    <label>Annual Inv. Return (%)</label>
+                    <input type="number" id="global-inv-return" value="7.0" step="0.5">
+                </div>
+            </div>
+        </section>
+
+        <!-- Main 3 Columns for Scenarios -->
+        <div class="scenarios-grid">
+            <!-- Scenario 1: Baseline -->
+            <section class="glass-panel scenario-card">
+                <div class="card-header base-color">
+                    <h2>1. Current Property</h2>
+                    <span class="badge">Baseline</span>
+                </div>
+                <div class="input-section">
+                    <h3>Home Details</h3>
+                    <div class="input-group"><label>Current Value ($)</label><input type="number" id="curr-value" value="500000" step="10000"></div>
+                    <div class="input-group"><label>Remaining Mortgage ($)</label><input type="number" id="curr-balance" value="300000" step="10000"></div>
+                    <div class="input-group"><label>Interest Rate (%)</label><input type="number" id="curr-rate" value="3.5" step="0.1"></div>
+                    <div class="input-group"><label>Remaining Term (Yrs)</label><input type="number" id="curr-term" value="25"></div>
+                </div>
+                <div class="input-section">
+                    <h3>Monthly Costs</h3>
+                    <div class="input-group"><label>Taxes ($)</label><input type="number" id="curr-taxes" value="400"></div>
+                    <div class="input-group"><label>Insurance ($)</label><input type="number" id="curr-ins" value="100"></div>
+                    <div class="input-group"><label>Maintenance Save ($)</label><input type="number" id="curr-maint" value="200"></div>
+                </div>
+                <div class="input-section">
+                    <h3>Utilities</h3>
+                    <div class="utilities-grid">
+                        <div class="input-group"><label>Gas</label><input type="number" id="curr-gas" value="50"></div>
+                        <div class="input-group"><label>Electric</label><input type="number" id="curr-elec" value="100"></div>
+                        <div class="input-group"><label>Water</label><input type="number" id="curr-water" value="60"></div>
+                        <div class="input-group"><label>Trash</label><input type="number" id="curr-trash" value="30"></div>
+                        <div class="input-group"><label>Internet</label><input type="number" id="curr-int" value="100"></div>
+                    </div>
+                </div>
+                <div class="scenario-summary">
+                    <span>Monthly Total:</span>
+                    <h3 id="curr-total-display">$0</h3>
+                </div>
+            </section>
+
+            <!-- Scenario 2: Townhome -->
+            <section class="glass-panel scenario-card">
+                <div class="card-header town-color">
+                    <h2>2. Townhome</h2>
+                    <span class="badge">Buy</span>
+                </div>
+                <div class="input-section">
+                    <h3>Purchase Details</h3>
+                    <div class="input-group"><label>Asking Price ($)</label><input type="number" id="town-price" value="450000" step="10000"></div>
+                    <p class="helper-text">Down payment rolls over from Current Home Net Equity.</p>
+                    <div class="input-group"><label>New Loan Rate (%)</label><input type="number" id="town-rate" value="6.5" step="0.1"></div>
+                    <div class="input-group"><label>New Term (Yrs)</label><input type="number" id="town-term" value="30"></div>
+                </div>
+                <div class="input-section">
+                    <h3>Monthly Costs</h3>
+                    <div class="input-group"><label>New Taxes ($)</label><input type="number" id="town-taxes" value="350"></div>
+                    <div class="input-group"><label>New Insurance ($)</label><input type="number" id="town-ins" value="80"></div>
+                    <div class="input-group"><label>HOA Fee ($)</label><input type="number" id="town-hoa" value="300"></div>
+                </div>
+                <div class="input-section">
+                    <h3>Utilities</h3>
+                    <div class="utilities-grid">
+                        <div class="input-group"><label>Gas</label><input type="number" id="town-gas" value="40"></div>
+                        <div class="input-group"><label>Electric</label><input type="number" id="town-elec" value="80"></div>
+                        <div class="input-group"><label>Water</label><input type="number" id="town-water" value="50"></div>
+                        <div class="input-group"><label>Trash</label><input type="number" id="town-trash" value="0"></div>
+                        <div class="input-group"><label>Internet</label><input type="number" id="town-int" value="100"></div>
+                    </div>
+                </div>
+                <div class="scenario-summary">
+                    <span>Monthly Total:</span>
+                    <h3 id="town-total-display">$0</h3>
+                    <div class="delta-badge" id="town-delta"></div>
+                </div>
+            </section>
+
+            <!-- Scenario 3: Rent -->
+            <section class="glass-panel scenario-card">
+                <div class="card-header rent-color">
+                    <h2>3. Rent & Invest</h2>
+                    <span class="badge">Liquid</span>
+                </div>
+                <div class="input-section">
+                    <h3>Rental Details</h3>
+                    <div class="input-group"><label>Monthly Rent ($)</label><input type="number" id="rent-monthly" value="2500" step="100"></div>
+                    <div class="input-group"><label>Renter's Ins ($)</label><input type="number" id="rent-ins" value="20"></div>
+                    <p class="helper-text">Home sale proceeds drop into brokerage account.</p>
+                </div>
+                <div class="input-section">
+                    <h3>Utilities</h3>
+                    <div class="utilities-grid">
+                        <div class="input-group"><label>Gas</label><input type="number" id="rent-gas" value="30"></div>
+                        <div class="input-group"><label>Electric</label><input type="number" id="rent-elec" value="60"></div>
+                        <div class="input-group"><label>Water</label><input type="number" id="rent-water" value="0"></div>
+                        <div class="input-group"><label>Trash</label><input type="number" id="rent-trash" value="0"></div>
+                        <div class="input-group"><label>Internet</label><input type="number" id="rent-int" value="100"></div>
+                    </div>
+                </div>
+                <div class="scenario-summary last-summary">
+                    <span>Monthly Total:</span>
+                    <h3 id="rent-total-display">$0</h3>
+                    <div class="delta-badge" id="rent-delta"></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <section class="glass-panel chart-container">
+                <h2>Monthly Cash Flow Breakdown</h2>
+                <div class="canvas-wrapper">
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </section>
+            
+            <section class="glass-panel chart-container">
+                <h2>10-Year Net Worth Projection</h2>
+                <p class="chart-subtitle">Assumes the cheaper scenarios invest the monthly savings difference.</p>
+                <div class="canvas-wrapper">
+                    <canvas id="netWorthChart"></canvas>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
