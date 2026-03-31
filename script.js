@@ -52,12 +52,12 @@ function updateDashboard() {
         sum + (parseFloat(document.getElementById(`town-${u}`).value) || 0), 0);
 
     const netProceeds = (currValue * (1 - sellRate)) - currBal;
-    const isPayCash = document.getElementById('town-pay-cash').checked;
+    const strategy = document.getElementById('town-strategy').value;
     
     let townLoan = Math.max(0, townPrice - netProceeds);
     let townStartingCapital = 0;
     
-    if (isPayCash) {
+    if (strategy === 'cash') {
         townLoan = 0;
         townStartingCapital = netProceeds - townPrice;
     }
@@ -187,12 +187,25 @@ function updateDashboard() {
         // Townhome Year simulation
         const tVal = townPrice * Math.pow(1 + apprecRate, y);
         for(let m=0; m<12; m++) {
+            let currentPMT = townPMT;
+            let currentInvRate = townInvRate;
+            
+            if (strategy === 'payoff5' && y > 5) {
+                currentPMT = 0;
+                currentInvRate += townPMT;
+            }
+            
             if (tBal > 0) {
                 const interest = tBal * (townRate / 12);
-                const principal = townPMT - interest;
+                const principal = currentPMT - interest;
                 tBal = Math.max(0, tBal - principal);
             }
-            tInv = tInv * (1 + invRate/12) + townInvRate;
+            tInv = tInv * (1 + invRate/12) + currentInvRate;
+        }
+        
+        if (strategy === 'payoff5' && y === 5) {
+            tInv -= tBal;
+            tBal = 0;
         }
         townNW.push((tVal - tBal) + tInv);
 
