@@ -28,7 +28,7 @@ function updateDashboard() {
     const currValue = parseFloat(document.getElementById('curr-value').value);
     const currBal = parseFloat(document.getElementById('curr-balance').value);
     const currRate = parseFloat(document.getElementById('curr-rate').value) / 100;
-    const currTerm = parseFloat(document.getElementById('curr-term').value) * 12;
+    const currPMT = parseFloat(document.getElementById('curr-pmt').value);
     
     const currTaxes = parseFloat(document.getElementById('curr-taxes').value) || 0;
     const currIns = parseFloat(document.getElementById('curr-ins').value) || 0;
@@ -37,7 +37,6 @@ function updateDashboard() {
     const currUtils = ['gas', 'elec', 'water', 'trash', 'int'].reduce((sum, u) => 
         sum + (parseFloat(document.getElementById(`curr-${u}`).value) || 0), 0);
     
-    const currPMT = calculatePMT(currRate / 12, currTerm, currBal);
     const currMonthlyTotal = currPMT + currTaxes + currIns + currMaint + currUtils;
 
     // ==== TOWNHOME ====
