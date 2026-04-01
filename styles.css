@@ -54,25 +54,26 @@ body {
 .dashboard-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 1rem 2rem;
 }
 
 .dashboard-header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
     animation: fadeInDown 0.8s ease;
 }
 
 .dashboard-header h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 800;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .highlight {
     color: var(--highlight);
     background: linear-gradient(90deg, #38bdf8, #818cf8);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -85,10 +86,10 @@ body {
     background: var(--panel-bg);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--panel-border);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: var(--radius);
-    padding: 1.5rem;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    padding: 1.25rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 30px rgba(0, 0, 0, 0.2);
     transition: transform var(--transition), box-shadow var(--transition);
 }
 
@@ -99,28 +100,28 @@ body {
 
 /* Global Assumptions */
 .global-assumptions {
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
     animation: fadeIn 1s ease;
 }
 
 .global-assumptions h2 {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
     color: var(--highlight);
 }
 
 .input-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
 /* Scenario Grid */
 .scenarios-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
 }
 
 .scenario-card {
@@ -137,13 +138,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--panel-border);
 }
 
 .card-header h2 {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
 }
 
 .base-color h2 { color: var(--curr-color); }
@@ -161,13 +162,13 @@ body {
 
 /* Inputs */
 .input-section {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .input-section h3 {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--highlight);
+    margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -175,29 +176,36 @@ body {
 .input-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
 }
 
 .input-group label {
-    font-size: 0.85rem;
-    margin-bottom: 0.25rem;
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
     color: #cbd5e1;
 }
 
-.input-group input {
+.input-group input, .input-group select {
     background: var(--input-bg);
     border: 1px solid var(--input-border);
     color: var(--text-primary);
-    padding: 0.5rem 0.75rem;
+    padding: 0.45rem 0.6rem;
     border-radius: 8px;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     transition: var(--transition);
     outline: none;
+    width: 100%;
 }
 
-.input-group input:focus {
+.input-group select option {
+    background: var(--bg-color);
+    color: var(--text-primary);
+}
+
+.input-group input:focus, .input-group select:focus {
     border-color: var(--highlight);
     box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .helper-text {
@@ -211,14 +219,14 @@ body {
 /* Utilities inside card */
 .utilities-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.4rem;
 }
 
 .scenario-summary {
     margin-top: auto;
     background: rgba(0,0,0,0.2);
-    padding: 1rem;
+    padding: 0.75rem;
     border-radius: 12px;
     text-align: center;
     position: relative;
@@ -253,7 +261,7 @@ body {
 .charts-section {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.25rem;
     animation: slideUp 1s ease 0.4s backwards;
 }
 
@@ -270,7 +278,7 @@ body {
 
 .canvas-wrapper {
     position: relative;
-    height: 350px;
+    height: 300px;
     width: 100%;
 }
 
