@@ -1,5 +1,5 @@
 // DOM Elements
-const inputs = document.querySelectorAll('input');
+const inputs = document.querySelectorAll('input, select');
 const ctxMonthly = document.getElementById('monthlyChart').getContext('2d');
 const ctxNetWorth = document.getElementById('netWorthChart').getContext('2d');
 
@@ -24,118 +24,114 @@ function updateDashboard() {
     const apprecRate = parseFloat(document.getElementById('global-home-apprec').value) / 100;
     const invRate = parseFloat(document.getElementById('global-inv-return').value) / 100;
 
+    // ==== RETIREMENT PROFILE ====
+    const basePortfolio = parseFloat(document.getElementById('ret-portfolio').value) || 0;
+    const ssaIncome = parseFloat(document.getElementById('ret-ssa').value) || 0;
+    const rentalNet = parseFloat(document.getElementById('ret-rental').value) || 0;
+    const monthlyDraw = parseFloat(document.getElementById('ret-draw').value) || 0;
+    const healthPremium = parseFloat(document.getElementById('ret-ins-premium').value) || 0;
+    const lifestyleGoal = parseFloat(document.getElementById('ret-lifestyle-goal').value) || 0;
+
+    const totalIncome = ssaIncome + rentalNet + monthlyDraw;
+
     // ==== CURRENT PROPERTY ====
     const currValue = parseFloat(document.getElementById('curr-value').value);
     const currBal = parseFloat(document.getElementById('curr-balance').value);
     const currRate = parseFloat(document.getElementById('curr-rate').value) / 100;
     const currPMT = parseFloat(document.getElementById('curr-pmt').value);
-    
     const currTaxes = parseFloat(document.getElementById('curr-taxes').value) || 0;
     const currIns = parseFloat(document.getElementById('curr-ins').value) || 0;
     const currMaint = parseFloat(document.getElementById('curr-maint').value) || 0;
-    
     const currUtils = ['gas', 'elec', 'water', 'trash', 'int'].reduce((sum, u) => 
         sum + (parseFloat(document.getElementById(`curr-${u}`).value) || 0), 0);
     
-    const currMonthlyTotal = currPMT + currTaxes + currIns + currMaint + currUtils;
+    const currHousingTotal = currPMT + currTaxes + currIns + currMaint + currUtils + healthPremium;
 
     // ==== TOWNHOME ====
     const townPrice = parseFloat(document.getElementById('town-price').value);
     const townRate = parseFloat(document.getElementById('town-rate').value) / 100;
     const townTerm = parseFloat(document.getElementById('town-term').value) * 12;
-
     const townTaxes = parseFloat(document.getElementById('town-taxes').value) || 0;
     const townIns = parseFloat(document.getElementById('town-ins').value) || 0;
     const townHoa = parseFloat(document.getElementById('town-hoa').value) || 0;
-
+    const townExtraMtg = parseFloat(document.getElementById('town-extra-pmt').value) || 0;
     const townUtils = ['gas', 'elec', 'water', 'trash', 'int'].reduce((sum, u) => 
         sum + (parseFloat(document.getElementById(`town-${u}`).value) || 0), 0);
 
     const netProceeds = (currValue * (1 - sellRate)) - currBal;
     const strategy = document.getElementById('town-strategy').value;
-    
-    let townLoan = Math.max(0, townPrice - netProceeds);
+    let townLoanStart = Math.max(0, townPrice - netProceeds);
     let townStartingCapital = 0;
-    
     if (strategy === 'cash') {
-        townLoan = 0;
+        townLoanStart = 0;
         townStartingCapital = netProceeds - townPrice;
     }
-
-    const townPMT = calculatePMT(townRate / 12, townTerm, townLoan);
-    const townMonthlyTotal = townPMT + townTaxes + townIns + townHoa + townUtils;
+    const townPMT = calculatePMT(townRate / 12, townTerm, townLoanStart);
+    const townHousingTotal = townPMT + townTaxes + townIns + townHoa + townUtils + healthPremium;
 
     // ==== RENT & INVEST ====
     const rentMonthly = parseFloat(document.getElementById('rent-monthly').value) || 0;
+    const rentTaxes = parseFloat(document.getElementById('rent-taxes').value) || 0;
     const rentIns = parseFloat(document.getElementById('rent-ins').value) || 0;
-    
     const rentUtils = ['gas', 'elec', 'water', 'trash', 'int'].reduce((sum, u) => 
         sum + (parseFloat(document.getElementById(`rent-${u}`).value) || 0), 0);
 
-    const rentMonthlyTotal = rentMonthly + rentIns + rentUtils;
+    const rentHousingTotal = rentMonthly + rentTaxes + rentIns + rentUtils + healthPremium;
     const rentStartingCapital = netProceeds;
 
     // UPDATE UI TEXT
-    document.getElementById('curr-total-display').innerText = `$${Math.round(currMonthlyTotal).toLocaleString()}`;
-    document.getElementById('town-total-display').innerText = `$${Math.round(townMonthlyTotal).toLocaleString()}`;
-    document.getElementById('rent-total-display').innerText = `$${Math.round(rentMonthlyTotal).toLocaleString()}`;
+    document.getElementById('curr-total-display').innerText = `$${Math.round(currHousingTotal).toLocaleString()}`;
+    document.getElementById('town-total-display').innerText = `$${Math.round(townHousingTotal).toLocaleString()}`;
+    document.getElementById('rent-total-display').innerText = `$${Math.round(rentHousingTotal).toLocaleString()}`;
 
     // Delta Updates
-    const setDelta = (id, currentTotal, baselineTotal) => {
+    const setDelta = (id, housingTotal, totalInflow) => {
         const el = document.getElementById(id);
-        const diff = currentTotal - baselineTotal;
-        const sign = diff > 0 ? '+' : '';
-        el.innerText = `Δ ${sign}$${Math.round(diff)}`;
-        el.className = `delta-badge ${diff > 0 ? 'positive' : 'negative'}`;
-        if (Math.abs(diff) < 1) el.style.display = 'none';
-        else el.style.display = 'block';
+        const surplus = totalInflow - housingTotal;
+        el.innerText = `Surplus: $${Math.round(surplus).toLocaleString()}/mo`;
+        el.className = `delta-badge ${surplus > 0 ? 'negative' : 'positive'}`; 
+        el.style.display = 'block';
     };
-
-    setDelta('town-delta', townMonthlyTotal, currMonthlyTotal);
-    setDelta('rent-delta', rentMonthlyTotal, currMonthlyTotal);
+    setDelta('town-delta', townHousingTotal, totalIncome);
+    setDelta('rent-delta', rentHousingTotal, totalIncome);
 
     // ===========================
     // UPDATE MONTHLY CHART
     // ===========================
-    const monthlyData = {
-        labels: ['P&I / Rent', 'Taxes & Ins', 'HOA / Maint', 'Utilities'],
-        datasets: [
-            {
-                label: 'Current Property',
-                backgroundColor: 'rgba(244, 63, 94, 0.8)',
-                data: [currPMT, currTaxes + currIns, currMaint, currUtils]
-            },
-            {
-                label: 'Townhome',
-                backgroundColor: 'rgba(16, 185, 129, 0.8)',
-                data: [townPMT, townTaxes + townIns, townHoa, townUtils]
-            },
-            {
-                label: 'Rent & Invest',
-                backgroundColor: 'rgba(139, 92, 246, 0.8)',
-                data: [rentMonthly, rentIns, 0, rentUtils] // Rent in P&I bucket
-            }
-        ]
-    };
-
     if (monthlyChartInstance) monthlyChartInstance.destroy();
     monthlyChartInstance = new Chart(ctxMonthly, {
         type: 'bar',
-        data: monthlyData,
+        data: {
+            labels: ['Current Home (Stay)', 'Townhome (Buy)', 'Rent & Invest'],
+            datasets: [
+                {
+                    label: 'Housing & Taxes',
+                    backgroundColor: 'rgba(244, 63, 94, 0.8)',
+                    data: [currHousingTotal, townHousingTotal, rentHousingTotal]
+                },
+                {
+                    label: 'Income Surplus (Lifestyle Fund)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                    data: [
+                        Math.max(0, totalIncome - currHousingTotal),
+                        Math.max(0, totalIncome - townHousingTotal),
+                        Math.max(0, totalIncome - rentHousingTotal)
+                    ]
+                }
+            ]
+        },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                x: { grid: { color: 'rgba(255,255,255,0.05)' } },
-                y: { stacked: false, grid: { color: 'rgba(255,255,255,0.05)' } }
+                x: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+                y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' } }
             },
             plugins: {
                 legend: { position: 'top' },
                 tooltip: {
                     callbacks: {
-                        label: function(context) {
-                            return `${context.dataset.label}: $${Math.round(context.raw)}`;
-                        }
+                        label: function(context) { return `${context.dataset.label}: $${Math.round(context.raw).toLocaleString()}`; }
                     }
                 }
             }
@@ -146,74 +142,57 @@ function updateDashboard() {
     // 10-YEAR PROJECTION LOGIC
     // ===========================
     const years = Array.from({length: 11}, (_, i) => i);
-    const maxMonthly = Math.max(currMonthlyTotal, townMonthlyTotal, rentMonthlyTotal);
-    
-    // Amounts to invest each month (savings relative to most expensive scenario)
-    const currInvRate = maxMonthly - currMonthlyTotal;
-    const townInvRate = maxMonthly - townMonthlyTotal;
-    const rentInvRate = maxMonthly - rentMonthlyTotal;
-
     const currNW = [];
     const townNW = [];
     const rentNW = [];
 
     let cBal = currBal;
-    let tBal = townLoan;
+    let tBal = townLoanStart;
     
-    let cInv = 0;
-    let tInv = townStartingCapital;
-    let rInv = rentStartingCapital;
+    let cPort = basePortfolio;
+    let tPort = basePortfolio + townStartingCapital;
+    let rPort = basePortfolio + rentStartingCapital;
 
     years.forEach(y => {
         if (y === 0) {
-            currNW.push((currValue - cBal) + cInv);
-            townNW.push((townPrice - tBal) + tInv);
-            rentNW.push(rInv);
+            currNW.push((currValue - cBal) + cPort);
+            townNW.push((townPrice - tBal) + tPort);
+            rentNW.push(rPort);
             return;
         }
 
-        // Current Property Year simulation
         const cVal = currValue * Math.pow(1 + apprecRate, y);
-        for(let m=0; m<12; m++) {
-            if (cBal > 0) {
-                const interest = cBal * (currRate / 12);
-                const principal = currPMT - interest;
-                cBal = Math.max(0, cBal - principal);
-            }
-            cInv = cInv * (1 + invRate/12) + currInvRate;
-        }
-        currNW.push((cVal - cBal) + cInv);
-
-        // Townhome Year simulation
         const tVal = townPrice * Math.pow(1 + apprecRate, y);
-        for(let m=0; m<12; m++) {
-            let currentPMT = townPMT;
-            let currentInvRate = townInvRate;
-            
-            if (strategy === 'payoff5' && y > 5) {
-                currentPMT = 0;
-                currentInvRate += townPMT;
-            }
-            
-            if (tBal > 0) {
-                const interest = tBal * (townRate / 12);
-                const principal = currentPMT - interest;
-                tBal = Math.max(0, tBal - principal);
-            }
-            tInv = tInv * (1 + invRate/12) + currentInvRate;
-        }
-        
-        if (strategy === 'payoff5' && y === 5) {
-            tInv -= tBal;
-            tBal = 0;
-        }
-        townNW.push((tVal - tBal) + tInv);
 
-        // Rent Year simulation
         for(let m=0; m<12; m++) {
-            rInv = rInv * (1 + invRate/12) + rentInvRate;
+            // Portfolio Growth & Withdrawals
+            cPort = cPort * (1 + inv_rate/12) - monthlyDraw;
+            tPort = tPort * (1 + inv_rate/12) - monthlyDraw;
+            rPort = rPort * (1 + inv_rate/12) - monthlyDraw;
+
+            // Reinvestment of surplus (after lifestyle goal)
+            const cSurplus = Math.max(0, totalIncome - currHousingTotal - lifestyleGoal);
+            const tSurplus = Math.max(0, totalIncome - townHousingTotal - lifestyleGoal - townExtraMtg);
+            const rSurplus = Math.max(0, totalIncome - rentHousingTotal - lifestyleGoal);
+
+            cPort += cSurplus;
+            tPort += tSurplus;
+            rPort += rSurplus;
+
+            // Debt Payoff
+            if (cBal > 0) {
+                const cInterest = cBal * (currRate / 12);
+                cBal = Math.max(0, cBal - (currPMT - cInterest));
+            }
+            if (tBal > 0) {
+                const tInterest = tBal * (townRate / 12);
+                tBal = Math.max(0, tBal - (townPMT + townExtraMtg - tInterest));
+            }
         }
-        rentNW.push(rInv);
+
+        currNW.push((cVal - cBal) + cPort);
+        townNW.push((tVal - tBal) + tPort);
+        rentNW.push(rPort);
     });
 
     // UPDATE LINE CHART
@@ -224,7 +203,7 @@ function updateDashboard() {
             labels: years.map(y => `Year ${y}`),
             datasets: [
                 {
-                    label: 'Current Property (Eq + Inv)',
+                    label: 'Stay (Palace Garden)',
                     data: currNW,
                     borderColor: '#f43f5e',
                     backgroundColor: 'rgba(244, 63, 94, 0.1)',
@@ -232,7 +211,7 @@ function updateDashboard() {
                     fill: true
                 },
                 {
-                    label: 'Townhome (Eq + Inv)',
+                    label: 'Buy (Brookside Townhome)',
                     data: townNW,
                     borderColor: '#10b981',
                     backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -240,7 +219,7 @@ function updateDashboard() {
                     fill: true
                 },
                 {
-                    label: 'Rent & Invest (Portfolio)',
+                    label: 'Rent & Invest',
                     data: rentNW,
                     borderColor: '#8b5cf6',
                     backgroundColor: 'rgba(139, 92, 246, 0.1)',
@@ -252,20 +231,16 @@ function updateDashboard() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
             scales: {
                 x: { grid: { color: 'rgba(255,255,255,0.05)' } },
-                y: { grid: { color: 'rgba(255,255,255,0.05)' } }
+                y: { grid: { color: 'rgba(255,255,255,0.05)' },
+                    ticks: { callback: (val) => `$${(val/1000000).toFixed(1)}M` }
+                }
             },
             plugins: {
                 tooltip: {
                     callbacks: {
-                        label: function(context) {
-                            return `${context.dataset.label}: $${Math.round(context.raw).toLocaleString()}`;
-                        }
+                        label: function(context) { return `${context.dataset.label}: $${Math.round(context.raw).toLocaleString()}`; }
                     }
                 }
             }

@@ -42,6 +42,37 @@
             </div>
         </section>
 
+        <!-- Retirement & Income Profile -->
+        <section class="glass-panel global-assumptions" style="border-top: 4px solid var(--highlight);">
+            <h2>Retirement & Income Profile</h2>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Base Investment Portfolio ($)</label>
+                    <input type="number" id="ret-portfolio" value="1269040" step="1000">
+                </div>
+                <div class="input-group">
+                    <label>Total Monthly SSA ($)</label>
+                    <input type="number" id="ret-ssa" value="4485" step="10">
+                </div>
+                <div class="input-group">
+                    <label>Monthly Rental Net ($)</label>
+                    <input type="number" id="ret-rental" value="1833" step="10">
+                </div>
+                <div class="input-group">
+                    <label>Monthly 401k Draw ($)</label>
+                    <input type="number" id="ret-draw" value="4000" step="100">
+                </div>
+                <div class="input-group">
+                    <label>Monthly Spend Goal ($)</label>
+                    <input type="number" id="ret-lifestyle-goal" value="10000" step="100">
+                </div>
+                <div class="input-group">
+                    <label>Health Ins/Premiums ($)</label>
+                    <input type="number" id="ret-ins-premium" value="200" step="10">
+                </div>
+            </div>
+        </section>
+
         <!-- Main 3 Columns for Scenarios -->
         <div class="scenarios-grid">
             <!-- Scenario 1: Baseline -->
@@ -59,7 +90,7 @@
                 </div>
                 <div class="input-section">
                     <h3>Monthly Costs</h3>
-                    <div class="input-group"><label>Taxes ($)</label><input type="number" id="curr-taxes" value="800"></div>
+                    <div class="input-group"><label>Est. Income Taxes ($)</label><input type="number" id="curr-taxes" value="667"></div>
                     <div class="input-group"><label>Insurance ($)</label><input type="number" id="curr-ins" value="200"></div>
                     <div class="input-group"><label>Maintenance Save ($)</label><input type="number" id="curr-maint" value="1500"></div>
                 </div>
@@ -102,9 +133,10 @@
                 </div>
                 <div class="input-section">
                     <h3>Monthly Costs</h3>
-                    <div class="input-group"><label>New Taxes ($)</label><input type="number" id="town-taxes" value="350"></div>
+                    <div class="input-group"><label>Est. Income Taxes ($)</label><input type="number" id="town-taxes" value="667"></div>
                     <div class="input-group"><label>New Insurance ($)</label><input type="number" id="town-ins" value="80"></div>
                     <div class="input-group"><label>HOA Fee ($)</label><input type="number" id="town-hoa" value="300"></div>
+                    <div class="input-group"><label>Extra Monthly Principal ($)</label><input type="number" id="town-extra-pmt" value="1500" step="100"></div>
                 </div>
                 <div class="input-section">
                     <h3>Utilities</h3>
@@ -132,6 +164,7 @@
                 <div class="input-section">
                     <h3>Rental Details</h3>
                     <div class="input-group"><label>Monthly Rent ($)</label><input type="number" id="rent-monthly" value="2700" step="100"></div>
+                    <div class="input-group"><label>Est. Income Taxes ($)</label><input type="number" id="rent-taxes" value="667"></div>
                     <div class="input-group"><label>Renter's Ins ($)</label><input type="number" id="rent-ins" value="20"></div>
                     <p class="helper-text">Home sale proceeds drop into brokerage account.</p>
                 </div>
