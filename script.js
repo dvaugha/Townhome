@@ -29,10 +29,11 @@ function updateDashboard() {
     const ssaIncome = parseFloat(document.getElementById('ret-ssa').value) || 0;
     const rentalNet = parseFloat(document.getElementById('ret-rental').value) || 0;
     const monthlyDraw = parseFloat(document.getElementById('ret-draw').value) || 0;
+    const drawTax = parseFloat(document.getElementById('ret-draw-tax').value) / 100;
     const healthPremium = parseFloat(document.getElementById('ret-ins-premium').value) || 0;
     const lifestyleGoal = parseFloat(document.getElementById('ret-lifestyle-goal').value) || 0;
 
-    const totalIncome = ssaIncome + rentalNet + monthlyDraw;
+    const totalIncome = ssaIncome + rentalNet + (monthlyDraw * (1 - drawTax));
 
     // ==== CURRENT PROPERTY ====
     const currValue = parseFloat(document.getElementById('curr-value').value);
@@ -165,10 +166,10 @@ function updateDashboard() {
         const tVal = townPrice * Math.pow(1 + apprecRate, y);
 
         for(let m=0; m<12; m++) {
-            // Portfolio Growth & Withdrawals
-            cPort = cPort * (1 + inv_rate/12) - monthlyDraw;
-            tPort = tPort * (1 + inv_rate/12) - monthlyDraw;
-            rPort = rPort * (1 + inv_rate/12) - monthlyDraw;
+            // Portfolio Growth & Withdrawals (Gross)
+            cPort = cPort * (1 + invRate/12) - monthlyDraw;
+            tPort = tPort * (1 + invRate/12) - monthlyDraw;
+            rPort = rPort * (1 + invRate/12) - monthlyDraw;
 
             // Reinvestment of surplus (after lifestyle goal)
             const cSurplus = Math.max(0, totalIncome - currHousingTotal - lifestyleGoal);
